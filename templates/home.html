@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Management System{% endblock %}
+
+{% block content %}
+
+<div class="min-h-[calc(100vh-130px)] flex items-center justify-center px-6">
+
+    <div class="max-w-5xl w-full">
+
+        <div class="text-center mb-12">
+
+            <div class="inline-flex items-center px-4 py-2 rounded-full
+                        bg-blue-100 text-blue-700 text-sm font-medium mb-5">
+                Internal Business Application
+            </div>
+
+            <h1 class="text-5xl font-bold text-slate-900 mb-5">
+                F TEA Sales Management
+            </h1>
+
+            <p class="text-lg text-slate-500 max-w-2xl mx-auto">
+                A centralized platform for sales representatives
+                and management to record, monitor and analyze sales.
+            </p>
+
+        </div>
+
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <!-- Sales Representative -->
+
+            <a href="{% url 'sales_entry' % target="_blank"} "
+               class="group bg-white rounded-3xl p-8 shadow-lg
+                      border border-slate-200
+                      hover:shadow-2xl hover:-translate-y-1
+                      transition duration-300">
+
+                <div class="w-16 h-16 rounded-2xl bg-blue-100
+                            flex items-center justify-center
+                            text-3xl mb-6">
+                    👤
+                </div>
+
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">
+                    Sales Representative
+                </h2>
+
+                <p class="text-slate-500 mb-6">
+                    Enter daily sales information, select products,
+                    quantities and submit sales records.
+                </p>
+
+                <span class="inline-flex items-center font-semibold
+                             text-blue-600 group-hover:gap-3 transition-all">
+                    Enter Sales
+                    <span class="ml-2">→</span>
+                </span>
+
+            </a>
+
+
+            <!-- Management -->
+
+            <a href="{% url 'dashboard' %}"
+               class="group bg-white rounded-3xl p-8 shadow-lg
+                      border border-slate-200
+                      hover:shadow-2xl hover:-translate-y-1
+                      transition duration-300">
+
+                <div class="w-16 h-16 rounded-2xl bg-emerald-100
+                            flex items-center justify-center
+                            text-3xl mb-6">
+                    📊
+                </div>
+
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">
+                    Management
+                </h2>
+
+                <p class="text-slate-500 mb-6">
+                    View total sales, division performance,
+                    representative performance and product sales.
+                </p>
+
+                <span class="inline-flex items-center font-semibold
+                             text-emerald-600 group-hover:gap-3 transition-all">
+                    View Dashboard
+                    <span class="ml-2">→</span>
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

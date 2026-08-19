@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Sale Submitted{% endblock %}
+
+{% block content %}
+
+<div class="min-h-[calc(100vh-130px)] flex items-center justify-center px-6">
+
+    <div class="bg-white rounded-3xl shadow-xl
+                border border-slate-200
+                p-10 max-w-lg w-full text-center">
+
+        <div class="w-20 h-20 rounded-full bg-emerald-100
+                    flex items-center justify-center
+                    text-4xl mx-auto mb-6">
+
+            ✓
+
+        </div>
+
+        <h1 class="text-3xl font-bold text-slate-900">
+            Sales Submitted Successfully
+        </h1>
+
+        <p class="text-slate-500 mt-3">
+            Sales record #{{ sale.id }} has been saved successfully.
+        </p>
+
+
+        <div class="bg-slate-50 rounded-2xl p-6 mt-8 text-left">
+
+            <div class="flex justify-between py-2">
+                <span class="text-slate-500">
+                    Representative
+                </span>
+
+                <span class="font-semibold">
+                    {{ sale.representative.name }}
+                </span>
+            </div>
+
+
+            <div class="flex justify-between py-2">
+                <span class="text-slate-500">
+                    District
+                </span>
+
+                <span class="font-semibold">
+                    {{ sale.district.name }}
+                </span>
+            </div>
+
+
+            <div class="flex justify-between py-2">
+                <span class="text-slate-500">
+                    Division
+                </span>
+
+                <span class="font-semibold">
+                    {{ sale.division.name }}
+                </span>
+            </div>
+
+
+            <div class="border-t mt-4 pt-4
+                        flex justify-between">
+
+                <span class="font-bold">
+                    Total
+                </span>
+
+                <span class="font-bold text-2xl text-emerald-600">
+                    ৳{{ sale.total_amount }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="flex gap-4 mt-8">
+
+            <a href="{% url 'sales_entry' %}"
+               class="flex-1 bg-blue-600 text-white
+                      py-3 rounded-xl font-semibold">
+
+                New Sale
+
+            </a>
+
+            <a href="{% url 'home' %}"
+               class="flex-1 bg-slate-200
+                      text-slate-700 py-3 rounded-xl
+                      font-semibold">
+
+                Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

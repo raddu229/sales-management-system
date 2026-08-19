@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}F tea sales management{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-800">
+
+    <nav class="bg-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+            <a href="{% url 'home' %}" class="font-bold text-xl">
+                demo<span class="text-blue-400">Pro</span>
+            </a>
+
+            <div class="text-sm text-slate-300">
+                @rahattalha_aug20
+            </div>
+
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer class="text-center text-sm text-slate-400 py-8">
+        Internal Sales Management System
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,455 @@
+{% extends "base.html" %}
+
+{% block title %}Management Dashboard{% endblock %}
+
+{% block extra_head %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+    <div class="flex flex-col md:flex-row
+                md:items-center md:justify-between mb-10">
+
+        <div>
+
+            <a href="{% url 'home' %}"
+               class="text-blue-600 text-sm hover:underline">
+
+                ← Back to Home
+
+            </a>
+
+            <h1 class="text-4xl font-bold text-slate-900 mt-3">
+                Management Dashboard
+            </h1>
+
+            <p class="text-slate-500 mt-2">
+                Real-time overview of sales performance.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- KPI Cards -->
+
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+
+        <div class="bg-white rounded-3xl p-7
+                    shadow-lg border border-slate-200">
+
+            <div class="text-sm text-slate-500">
+                Total Sales
+            </div>
+
+            <div class="text-4xl font-bold
+                        text-blue-600 mt-3">
+
+                ৳{{ total_sales|floatformat:2 }}
+
+            </div>
+
+        </div>
+
+
+        <div class="bg-white rounded-3xl p-7
+                    shadow-lg border border-slate-200">
+
+            <div class="text-sm text-slate-500">
+                Transactions
+            </div>
+
+            <div class="text-4xl font-bold
+                        text-emerald-600 mt-3">
+
+                {{ total_transactions }}
+
+            </div>
+
+        </div>
+
+
+        <div class="bg-white rounded-3xl p-7
+                    shadow-lg border border-slate-200">
+
+            <div class="text-sm text-slate-500">
+                Total Quantity
+            </div>
+
+            <div class="text-4xl font-bold
+                        text-purple-600 mt-3">
+
+                {{ total_quantity }}
+
+                <span class="text-lg font-medium">
+                    pcs
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Charts -->
+
+    <div class="grid lg:grid-cols-2 gap-8 mb-10">
+
+
+        <!-- Division Chart -->
+
+        <div class="bg-white rounded-3xl
+                    p-8 shadow-lg border">
+
+            <h2 class="text-xl font-bold mb-6">
+                Division-wise Sales
+            </h2>
+
+            <div class="h-80">
+
+                <canvas id="divisionChart"></canvas>
+
+            </div>
+
+        </div>
+
+
+        <!-- Product Chart -->
+
+        <div class="bg-white rounded-3xl
+                    p-8 shadow-lg border">
+
+            <h2 class="text-xl font-bold mb-6">
+                Product-wise Sales
+            </h2>
+
+            <div class="h-80">
+
+                <canvas id="productChart"></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Representative Ranking -->
+
+    <div class="bg-white rounded-3xl
+                shadow-lg border p-8 mb-10">
+
+        <h2 class="text-xl font-bold mb-6">
+            Representative Performance
+        </h2>
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead>
+
+                    <tr class="border-b text-left
+                               text-sm text-slate-500">
+
+                        <th class="py-4">
+                            Rank
+                        </th>
+
+                        <th>
+                            Representative
+                        </th>
+
+                        <th>
+                            Employee ID
+                        </th>
+
+                        <th>
+                            Total Sales
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for rep in representative_sales %}
+
+                    <tr class="border-b hover:bg-slate-50">
+
+                        <td class="py-4 font-bold">
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td class="font-semibold">
+                            {{ rep.name }}
+                        </td>
+
+                        <td>
+                            {{ rep.employee_id }}
+                        </td>
+
+                        <td class="font-bold text-blue-600">
+                            ৳{{ rep.total|floatformat:2 }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="py-8 text-center
+                                   text-slate-400">
+
+                            No sales data available yet.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Sales -->
+
+    <div class="bg-white rounded-3xl
+                shadow-lg border p-8">
+
+        <h2 class="text-xl font-bold mb-6">
+            Recent Sales
+        </h2>
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead>
+
+                    <tr class="border-b text-left
+                               text-sm text-slate-500">
+
+                        <th class="py-4">
+                            Sale ID
+                        </th>
+
+                        <th>
+                            Representative
+                        </th>
+
+                        <th>
+                            Division
+                        </th>
+
+                        <th>
+                            District
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for sale in recent_sales %}
+
+                    <tr class="border-b hover:bg-slate-50">
+
+                        <td class="py-4 font-semibold">
+                            #{{ sale.id }}
+                        </td>
+
+                        <td>
+                            {{ sale.representative.name }}
+                        </td>
+
+                        <td>
+                            {{ sale.division.name }}
+                        </td>
+
+                        <td>
+                            {{ sale.district.name }}
+                        </td>
+
+                        <td class="font-bold text-emerald-600">
+                            ৳{{ sale.total_amount|floatformat:2 }}
+                        </td>
+
+                        <td class="text-slate-500">
+                            {{ sale.created_at|date:"d M Y, h:i A" }}
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="6"
+                            class="py-8 text-center
+                                   text-slate-400">
+
+                            No sales submitted yet.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{{ division_sales|json_script:"division-sales-data" }}
+{{ product_sales|json_script:"product-sales-data" }}
+
+
+<script>
+
+const divisionData =
+    JSON.parse(
+        document.getElementById(
+            "division-sales-data"
+        ).textContent
+    );
+
+
+const productData =
+    JSON.parse(
+        document.getElementById(
+            "product-sales-data"
+        ).textContent
+    );
+
+
+/* Division Chart */
+
+new Chart(
+    document.getElementById("divisionChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels:
+                divisionData.map(
+                    item => item.name
+                ),
+
+            datasets: [
+
+                {
+
+                    label: "Sales (BDT)",
+
+                    data:
+                        divisionData.map(
+                            item => item.total
+                        ),
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* Product Chart */
+
+new Chart(
+    document.getElementById("productChart"),
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels:
+                productData.map(
+                    item => item.name
+                ),
+
+            datasets: [
+
+                {
+
+                    data:
+                        productData.map(
+                            item => item.total
+                        )
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false
+
+        }
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,624 @@
+{% extends "base.html" %}
+
+{% block title %}Sales Entry{% endblock %}
+
+{% block content %}
+
+<div class="max-w-6xl mx-auto px-6 py-10">
+
+    <div class="mb-8">
+        <a href="{% url 'home' %}"
+           class="text-blue-600 hover:underline text-sm">
+            ← Back to Home
+        </a>
+
+        <h1 class="text-4xl font-bold text-slate-900 mt-4">
+            Sales Entry
+        </h1>
+
+        <p class="text-slate-500 mt-2">
+            Enter today's sales information.
+        </p>
+    </div>
+
+
+    <form method="POST" action="{% url 'submit_sale' %}" id="salesForm">
+
+        {% csrf_token %}
+
+        <input type="hidden"
+               name="items_json"
+               id="items_json">
+
+        <div class="bg-white rounded-3xl shadow-lg border
+                    border-slate-200 p-8 mb-8">
+
+            <h2 class="text-xl font-bold mb-6">
+                Representative Information
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        Division
+                    </label>
+
+                    <select id="division"
+                            class="w-full rounded-xl border-slate-300
+                                   p-3 border focus:ring-2
+                                   focus:ring-blue-500">
+                        <option value="">
+                            Select Division
+                        </option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        District
+                    </label>
+
+                    <select id="district"
+                            disabled
+                            class="w-full rounded-xl border-slate-300
+                                   p-3 border bg-slate-100">
+                        <option value="">
+                            Select District
+                        </option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        Representative
+                    </label>
+
+                    <select id="representative"
+                            name="representative_id"
+                            disabled
+                            class="w-full rounded-xl border-slate-300
+                                   p-3 border bg-slate-100">
+                        <option value="">
+                            Select Representative
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Product Selection -->
+
+        <div class="bg-white rounded-3xl shadow-lg border
+                    border-slate-200 p-8 mb-8">
+
+            <h2 class="text-xl font-bold mb-6">
+                Add Sales
+            </h2>
+
+            <div class="grid md:grid-cols-4 gap-6">
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        Tea Product
+                    </label>
+
+                    <select id="product"
+                            class="w-full rounded-xl border-slate-300
+                                   p-3 border">
+                        <option value="">
+                            Select Tea
+                        </option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        Package
+                    </label>
+
+                    <select id="package"
+                            disabled
+                            class="w-full rounded-xl border-slate-300
+                                   p-3 border bg-slate-100">
+                        <option value="">
+                            Select Package
+                        </option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">
+                        Quantity
+                    </label>
+
+                    <input id="quantity"
+                           type="number"
+                           min="1"
+                           value="1"
+                           class="w-full rounded-xl border-slate-300
+                                  p-3 border">
+                </div>
+
+
+                <div class="flex items-end">
+
+                    <button type="button"
+                            id="addItem"
+                            class="w-full bg-blue-600 text-white
+                                   rounded-xl p-3 font-semibold
+                                   hover:bg-blue-700 transition">
+
+                        + Add Product
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Items -->
+
+        <div class="bg-white rounded-3xl shadow-lg border
+                    border-slate-200 p-8">
+
+            <div class="flex justify-between items-center mb-6">
+
+                <h2 class="text-xl font-bold">
+                    Sales Items
+                </h2>
+
+                <div class="text-right">
+
+                    <div class="text-sm text-slate-500">
+                        Grand Total
+                    </div>
+
+                    <div id="grandTotal"
+                         class="text-3xl font-bold text-blue-600">
+                        ৳0.00
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="overflow-x-auto">
+
+                <table class="w-full">
+
+                    <thead>
+                        <tr class="border-b text-left text-sm
+                                   text-slate-500">
+
+                            <th class="py-4">Product</th>
+                            <th>Package</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                            <th></th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody id="itemsTable"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="flex justify-end mt-8">
+
+                <button type="submit"
+                        id="submitButton"
+                        disabled
+                        class="px-8 py-4 bg-emerald-600
+                               text-white rounded-xl
+                               font-bold text-lg
+                               hover:bg-emerald-700
+                               disabled:bg-slate-300
+                               disabled:cursor-not-allowed">
+
+                    ✓ Submit Sales
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+{{ divisions|json_script:"divisions-data" }}
+{{ districts|json_script:"districts-data" }}
+{{ representatives|json_script:"representatives-data" }}
+{{ products|json_script:"products-data" }}
+{{ packages|json_script:"packages-data" }}
+
+
+<script>
+
+const divisions =
+    JSON.parse(
+        document.getElementById("divisions-data").textContent
+    );
+
+const districts =
+    JSON.parse(
+        document.getElementById("districts-data").textContent
+    );
+
+const representatives =
+    JSON.parse(
+        document.getElementById("representatives-data").textContent
+    );
+
+const products =
+    JSON.parse(
+        document.getElementById("products-data").textContent
+    );
+
+const packages =
+    JSON.parse(
+        document.getElementById("packages-data").textContent
+    );
+
+
+const divisionSelect =
+    document.getElementById("division");
+
+const districtSelect =
+    document.getElementById("district");
+
+const representativeSelect =
+    document.getElementById("representative");
+
+const productSelect =
+    document.getElementById("product");
+
+const packageSelect =
+    document.getElementById("package");
+
+const quantityInput =
+    document.getElementById("quantity");
+
+const addItemButton =
+    document.getElementById("addItem");
+
+const itemsTable =
+    document.getElementById("itemsTable");
+
+const grandTotal =
+    document.getElementById("grandTotal");
+
+const submitButton =
+    document.getElementById("submitButton");
+
+const itemsJson =
+    document.getElementById("items_json");
+
+
+let salesItems = [];
+
+
+/* Populate Divisions */
+
+divisions.forEach(division => {
+
+    const option = document.createElement("option");
+
+    option.value = division.id;
+    option.textContent = division.name;
+
+    divisionSelect.appendChild(option);
+
+});
+
+
+/* Populate Products */
+
+products.forEach(product => {
+
+    const option = document.createElement("option");
+
+    option.value = product.id;
+    option.textContent = product.name;
+
+    productSelect.appendChild(option);
+
+});
+
+
+/* Division changed */
+
+divisionSelect.addEventListener("change", function() {
+
+    const divisionId = this.value;
+
+    districtSelect.innerHTML =
+        '<option value="">Select District</option>';
+
+    representativeSelect.innerHTML =
+        '<option value="">Select Representative</option>';
+
+    districtSelect.disabled = !divisionId;
+    representativeSelect.disabled = true;
+
+    if (!divisionId) {
+        return;
+    }
+
+    districts
+        .filter(d => d.division_id == divisionId)
+        .forEach(district => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = district.id;
+            option.textContent = district.name;
+
+            districtSelect.appendChild(option);
+
+        });
+
+});
+
+
+/* District changed */
+
+districtSelect.addEventListener("change", function() {
+
+    const districtId = this.value;
+
+    representativeSelect.innerHTML =
+        '<option value="">Select Representative</option>';
+
+    representativeSelect.disabled = !districtId;
+
+    if (!districtId) {
+        return;
+    }
+
+    representatives
+        .filter(r => r.district_id == districtId)
+        .forEach(rep => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = rep.id;
+
+            option.textContent =
+                `${rep.name} (${rep.employee_id})`;
+
+            representativeSelect.appendChild(option);
+
+        });
+
+});
+
+
+/* Product changed */
+
+productSelect.addEventListener("change", function() {
+
+    const productId = this.value;
+
+    packageSelect.innerHTML =
+        '<option value="">Select Package</option>';
+
+    packageSelect.disabled = !productId;
+
+    if (!productId) {
+        return;
+    }
+
+    packages
+        .filter(p => p.product_id == productId)
+        .forEach(pkg => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = pkg.id;
+
+            option.dataset.price = pkg.price;
+
+            option.textContent =
+                `${pkg.weight_grams}g - ৳${pkg.price}`;
+
+            packageSelect.appendChild(option);
+
+        });
+
+});
+
+
+/* Add product */
+
+addItemButton.addEventListener("click", function() {
+
+    const productId = productSelect.value;
+    const packageId = packageSelect.value;
+    const quantity = parseInt(quantityInput.value);
+
+    if (!representativeSelect.value) {
+        alert("Please select a representative.");
+        return;
+    }
+
+    if (!productId) {
+        alert("Please select a tea product.");
+        return;
+    }
+
+    if (!packageId) {
+        alert("Please select a package.");
+        return;
+    }
+
+    if (!quantity || quantity <= 0) {
+        alert("Please enter a valid quantity.");
+        return;
+    }
+
+    const product =
+        products.find(p => p.id == productId);
+
+    const pkg =
+        packages.find(p => p.id == packageId);
+
+    const total =
+        pkg.price * quantity;
+
+    salesItems.push({
+
+        product_id: product.id,
+        package_id: pkg.id,
+
+        product_name: product.name,
+
+        weight: pkg.weight_grams,
+
+        price: pkg.price,
+
+        quantity: quantity,
+
+        total: total
+
+    });
+
+    renderItems();
+
+});
+
+
+/* Render table */
+
+function renderItems() {
+
+    itemsTable.innerHTML = "";
+
+    let total = 0;
+
+    salesItems.forEach((item, index) => {
+
+        total += item.total;
+
+        const row =
+            document.createElement("tr");
+
+        row.className =
+            "border-b hover:bg-slate-50";
+
+        row.innerHTML = `
+
+            <td class="py-4 font-medium">
+                ${item.product_name}
+            </td>
+
+            <td>
+                ${item.weight}g
+            </td>
+
+            <td>
+                ${item.quantity}
+            </td>
+
+            <td>
+                ৳${item.price.toFixed(2)}
+            </td>
+
+            <td class="font-semibold">
+                ৳${item.total.toFixed(2)}
+            </td>
+
+            <td>
+
+                <button
+                    type="button"
+                    onclick="removeItem(${index})"
+                    class="text-red-500 hover:text-red-700">
+
+                    Remove
+
+                </button>
+
+            </td>
+        `;
+
+        itemsTable.appendChild(row);
+
+    });
+
+
+    grandTotal.textContent =
+        `৳${total.toFixed(2)}`;
+
+    submitButton.disabled =
+        salesItems.length === 0;
+
+}
+
+
+/* Remove item */
+
+function removeItem(index) {
+
+    salesItems.splice(index, 1);
+
+    renderItems();
+
+}
+
+
+/* Submit */
+
+document
+    .getElementById("salesForm")
+    .addEventListener("submit", function(event) {
+
+        if (!representativeSelect.value) {
+
+            event.preventDefault();
+
+            alert("Please select a representative.");
+
+            return;
+
+        }
+
+        if (salesItems.length === 0) {
+
+            event.preventDefault();
+
+            alert("Please add at least one product.");
+
+            return;
+
+        }
+
+        itemsJson.value =
+            JSON.stringify(salesItems);
+
+    });
+
+</script>
+
+{% endblock %}
